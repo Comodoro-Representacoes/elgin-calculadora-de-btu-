@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de BTUs de Ar Condicionado</title>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #f4f6f9; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+    .container { background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); padding: 30px; width: 100%; max-width: 400px; text-align: center; }
+    h2 { color: #333; margin-bottom: 20px; font-size: 1.5em; }
+    label { font-size: 1em; color: #555; display: block; text-align: left; margin-bottom: 5px; }
+    input, select { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 5px; font-size: 1em; background-color: #f9f9f9; }
+    button { background-color: #3498db; color: white; border: none; border-radius: 5px; padding: 10px; font-size: 1.1em; cursor: pointer; transition: background-color 0.3s; width: 100%; }
+    button:hover { background-color: #2980b9; }
+    .result { margin-top: 20px; font-size: 1.2em; color: #333; font-weight: bold; }
+    #refazer { display: none; margin-top: 10px; background-color: #e74c3c; }
+    #refazer:hover { background-color: #c0392b; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Calculadora de BTUs de Ar Condicionado</h2>
+  
+  <label for="largura">Largura do Ambiente (m):</label>
+  <input type="number" id="largura" placeholder="Ex: 5">
+
+  <label for="altura">Altura do Ambiente (m):</label>
+  <input type="number" id="altura" placeholder="Ex: 4">
+
+  <label for="pessoas">Número de Pessoas:</label>
+  <input type="number" id="pessoas" placeholder="Ex: 3">
+
+  <label for="eletronicos">Número de Aparelhos Eletrônicos <small>(computadores, televisores, etc.)</small>:</label>
+  <input type="number" id="eletronicos" placeholder="Ex: 2">
+
+  <label for="exposicao">Exposição ao Sol:</label>
+  <select id="exposicao">
+    <option value="indireta">Indireta (sem luz direta)</option>
+    <option value="parcial">Parcial (luz indireta ou parte do dia)</option>
+    <option value="direta">Direta (luz direta)</option>
+  </select>
+
+  <button onclick="calcularBTUs()">Calcular BTUs</button>
+  <button id="refazer" onclick="refazerCalculo()">Refazer Cálculo</button>
+
+  <div class="result" id="resultado"></div>
+</div>
+
+<script>
+  function calcularBTUs() {
+    const largura = parseFloat(document.getElementById('largura').value);
+    const altura = parseFloat(document.getElementById('altura').value);
+    const pessoas = parseInt(document.getElementById('pessoas').value);
+    const eletronicos = parseInt(document.getElementById('eletronicos').value);
+    const exposicao = document.getElementById('exposicao').value;
+
+    if (isNaN(largura) || isNaN(altura) || isNaN(pessoas) || isNaN(eletronicos)) {
+      alert("Por favor, preencha todos os campos.");
+      return;
+    }
+
+    // Cálculo da área do ambiente
+    const area = largura * altura;
+
+    // Cálculo inicial de BTUs
+    let btus = (area * 400) + (pessoas * 300) + (eletronicos * 200);
+
+    // Ajuste conforme a exposição solar
+    if (exposicao === 'direta') {
+      btus *= 1.3;
+    } else if (exposicao === 'parcial') {
+      btus *= 1.2;
+    } else {
+      btus *= 1.0;
+    }
+
+    // Arredondar para os modelos cadastrados
+    const modelos = [56000, 36000, 30000, 24000, 18000, 12000, 9000];
+    const btusArredondado = modelos.find(modelo => btus <= modelo) || modelos[0];
+
+    // Exibir o resultado arredondado
+    document.getElementById('resultado').innerHTML = `BTUs necessários: ${btusArredondado} BTUs`;
+
+    // Exibir botão de refazer cálculo
+    document.getElementById('refazer').style.display = 'block';
+  }
+
+  function refazerCalculo() {
+    document.getElementById('resultado').innerHTML = '';
+    document.getElementById('refazer').style.display = 'none';
+
+    // Limpar campos
+    document.getElementById('largura').value = '';
+    document.getElementById('altura').value = '';
+    document.getElementById('pessoas').value = '';
+    document.getElementById('eletronicos').value = '';
+    document.getElementById('exposicao').value = 'indireta';
+  }
+</script>
+
+</body>
+</html>
